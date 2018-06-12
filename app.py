@@ -40,4 +40,5 @@ def get_script_template() -> str:
         return script_template_file.read()
 
 
-app.run(debug=True, use_reloader=True)
+if __name__ == '__main__':
+    app.run(debug=True, use_reloader=True)
