@@ -8,6 +8,7 @@ manager.start()
 
 app = Flask(__name__, template_folder="views")
 
+
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == "GET":
