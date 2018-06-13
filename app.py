@@ -2,11 +2,10 @@ import os
 import sys
 from flask import Flask, render_template, redirect, url_for, request
 from logic.task_manager import TaskManager
-
-manager = TaskManager()
-manager.start()
+from logic.task_scheduler import TaskScheduler
 
 app = Flask(__name__, template_folder="views")
+manager: TaskManager = None
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -20,16 +19,23 @@ def index():
         return handle_new_script()
 
 
-@app.route('/disable/<id_value>', methods=["GET", "DELETE"])
+@app.route('/toggle/<id_value>', methods=["GET"])
+def toggle_task(id_value):
+    manager.toggle_task(id_value)
+    return redirect(url_for("index"))
+
+
+@app.route('/delete/<id_value>', methods=["GET"])
 def disable_task(id_value):
-    manager.disable_task(id_value)
+    manager.delete_task(id_value)
     return redirect(url_for("index"))
 
 
 def handle_new_script():
     name = request.form.get("name")
     script = request.form.get("script")
-    manager.add_task(name, script)
+    cron_time = request.form.get("cron_time")
+    manager.add_task(name, script, cron_time)
 
     return redirect(url_for("index"))
 
@@ -43,4 +49,8 @@ def get_script_template() -> str:
 
 
 if __name__ == '__main__':
+    manager = TaskManager.instance()
+    manager.start()
     app.run(debug=True, use_reloader=True, threaded=True)
+
+
