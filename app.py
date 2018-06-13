@@ -42,6 +42,7 @@ def handle_new_script():
 
 def get_script_template() -> str:
     cwd = os.path.dirname(sys.modules['__main__'].__file__)
+    cwd = ""
     path = os.path.join(cwd, "script_template.py")
 
     with open(path, 'r') as script_template_file:
